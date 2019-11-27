@@ -19,10 +19,10 @@
                         <h3 class="mt-2">{{query.asked_by|capfirst}}</h3>
                         <h5><span>{{query.asked_On|date:"D d M Y"}}</span></h5>
                     </div>
-                    <div class="d-flex text-justify  align-items-center pt-3 pb-2 mb-1 pl-4 pr-4 jumbotron ">
+                    <div class="d-flex text-justify  align-items-center pt-3 pb-2 mb-1 pr-0 pl-0">
                         <p>{{query.question|capfirst}}</p>
                     </div>
-
+                    <a href="{% url 'query' value=query.id %}" class="btn btn-outline-info mt-2" role="button">Answer</a>
 
                 </div>
             </div>
