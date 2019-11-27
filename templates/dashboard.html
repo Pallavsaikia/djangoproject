@@ -3,8 +3,53 @@
 <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
         <h1 class="h2">Dashboard</h1>
-        <div class="btn-toolbar mb-2 mb-md-0">
-        </div>
     </div>
 </main>
-{% endblock%}
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4 ">
+    {% for query in queries %}
+    <div class="container  border-bottom pb-3">
+        <div class="row">
+            <div class="[ col-xs-12 col-sm-offset-1 col-sm-12 ] ">
+                <div class="[ panel panel-default ] panel-google-plus ">
+
+                    <div class="panel-heading">
+                        <img class="[ img-circle pull-left ]"
+                             src="https://lh3.googleusercontent.com/-CxXg7_7ylq4/AAAAAAAAAAI/AAAAAAAAAQ8/LhCIKQC5Aq4/s46-c-k-no/photo.jpg"
+                             alt="Mouse0270"/>
+                        <h3 class="mt-2">{{query.asked_by|capfirst}}</h3>
+                        <h5><span>{{query.asked_On|date:"D d M Y"}}</span></h5>
+                    </div>
+                    <div class="d-flex text-justify  align-items-center pt-3 pb-2 mb-1 pl-4 pr-4 jumbotron ">
+                        <p>{{query.question|capfirst}}</p>
+                    </div>
+
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+    {% endfor %}
+    <!--    {% for query in queries %}-->
+    <!--    <div class="d-flex text-justify  align-items-center pt-3 pb-2 mb-1 jumbotron">-->
+
+    <!--        Q.{{query.question|capfirst}}-->
+
+    <!--    </div>-->
+    <!--    {% endfor %}-->
+</main>
+
+
+<!--</main>-->
+
+<!--<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">-->
+<!--    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">-->
+<!--        <h1 class="h2">Dashboard</h1>-->
+<!--        <div class="btn-toolbar mb-2 mb-md-0">-->
+
+<!--        </div>-->
+<!--    </div>-->
+<!--</main>-->
+<script type=""
+
+        {% endblock%}
