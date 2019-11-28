@@ -26,7 +26,7 @@ class QueryView(View):
     @method_decorator(login_required(login_url='/'))
     def get(self, request, value):
         query = Query.objects.get(pk=value)
-        query_reply = Answer.objects.filter(replied_to=value).order_by('-replied_on')
+        query_reply = Answer.objects.filter(replied_to=value).order_by('replied_on')
         context_send = {'queries': query, 'replies': query_reply}
         return render(request, 'answer_query.html', context=context_send)
 
