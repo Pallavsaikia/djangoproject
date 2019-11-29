@@ -22,5 +22,6 @@ urlpatterns = [
     url(r'^$', views.Login.as_view(), name='login'),
     url(r'^logout/', views.Logout.as_view(), name='logout'),
     url(r'^dashboard/', include('dashboard_app.urls'), name='dashboard'),
+    url(r'^api/', include('api.urls'), name='api'),
     path('admin/', admin.site.urls),
 ]
