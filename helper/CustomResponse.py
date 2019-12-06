@@ -19,13 +19,3 @@ class CustomResponse:
             'error': self.error,
             'data': self.data
         }
-
-        # response = {
-        #     'success': self.success,
-        #     'error': self.error,
-        #     'data': self.data
-        # }
-        # if self.success:
-        #     return Response(response, status=status.HTTP_200_OK)
-        # else:
-        #     return Response(response, status=status.HTTP_400_BAD_REQUEST)

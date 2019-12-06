@@ -1,5 +1,5 @@
 import jwt
-from first_project.settings import TOKEN_KEY
+from helper.JWTDecode import JwtDecode
 
 
 class TokenVerification:
@@ -8,16 +8,13 @@ class TokenVerification:
         # One-time configuration and initialization.
 
     def __call__(self, request):
-        # Code to be executed for each request before
-        # the view (and later middleware) are called.
-        request.check = True
+        request.valid_token = True
         request.token_decode = {}
         try:
-            token = request.META['HTTP_AUTHORIZATION']
-            decode = jwt.decode(token, TOKEN_KEY, algorithms=["HS256"])
+            decode = JwtDecode.decode(request)
             request.token_decode = decode
         except:
-            request.check = False
+            request.valid_token = False
 
         response = self.get_response(request)
         return response
