@@ -38,3 +38,20 @@ class LoginAPIView(APIView):
                 return Response(response.get_response, status=status.HTTP_400_BAD_REQUEST)
         response = CustomResponse(success=False, error=serializer.errors)
         return Response(response.get_response, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AskQueryApiView(APIView):
+    def post(self, request):
+        token = request.META['HTTP_AUTHORIZATION']
+        check=str(request.token_decode)
+        print(check)
+        print(check)
+        print(check)
+        print(check)
+        print(check)
+        try:
+            decode = jwt.decode(token, TOKEN_KEY, algorithms=["HS256"])
+        except:
+            response = CustomResponse(success=False, error={"invalid token": "token"})
+            return Response(response.get_response, status=status.HTTP_400_BAD_REQUEST)
+        return Response(decode, status=status.HTTP_200_OK)
