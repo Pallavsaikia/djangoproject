@@ -14,7 +14,7 @@ class RegisterApiView(APIView):
     def post(self, request):
         serializer = RegisterSerializers(data=request.data)
         if serializer.is_valid():
-            # serializer.save()
+            serializer.save()
             response = CustomResponse(success=True)
             return Response(response.get_response, status=status.HTTP_200_OK)
         response = CustomResponse(success=False, error=serializer.errors)
