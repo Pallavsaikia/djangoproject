@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from dashboard_app.models import Query, Appointment
 from rest_framework import serializers
 
 
@@ -32,3 +33,21 @@ class RegisterSerializers(serializers.ModelSerializer):
 class LoginSerializers(serializers.Serializer):
     username = serializers.CharField(required=True)
     password = serializers.CharField(required=True)
+
+
+class QuerySerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Query
+        fields = [
+            'question'
+        ]
+
+    def save(self, user):
+        query = Query(
+            question=self.validated_data['question'],
+            asked_by=user
+        )
+        query.save()
+
+
+
