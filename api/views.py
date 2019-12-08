@@ -2,7 +2,8 @@ from rest_framework.views import APIView
 from api.serializers import (
     RegisterSerializers,
     LoginSerializers,
-    QuerySerializers
+    QuerySerializers,
+    AnswerSerializers
 )
 from rest_framework.response import Response
 from rest_framework import status
@@ -14,8 +15,9 @@ from dashboard_app.models import Appointment
 from helper.JWTDecode import JwtDecode
 from helper.check_token import check_token
 from django.utils.decorators import method_decorator
+from dashboard_app.models import Query
 import jwt
-from datetime import datetime, timedelta
+from datetime import datetime
 
 
 # Create your views here.
@@ -68,12 +70,12 @@ class AskQueryApiView(APIView):
 class AnswerAQueryApiView(APIView):
     @method_decorator(check_token)
     def post(self, request):
-        decode = JwtDecode.decode(request)
-        username = decode.get("username")
+        username = request.token_decode.get("username")
         user = User.objects.get(username=username)
-        serializer = QuerySerializers(data=request.data)
+
+        serializer = AnswerSerializers(data=request.data)
         if serializer.is_valid():
-            serializer.save(user)
+            serializer.save(user=user)
             response = CustomResponse(success=True)
             return Response(response.get_response, status=status.HTTP_200_OK)
         else:

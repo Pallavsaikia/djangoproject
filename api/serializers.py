@@ -54,5 +54,15 @@ class AnswerSerializers(serializers.ModelSerializer):
     class Meta:
         model = Answer
         fields = [
-            'reply'
+            'reply',
+            'replied_to'
         ]
+
+    def save(self, user):
+        answer = Answer(
+            reply=self.validated_data['reply'],
+            replied_to=self.validated_data['replied_to'],
+            replied_by=user,
+
+        )
+        answer.save()
