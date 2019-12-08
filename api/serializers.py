@@ -74,8 +74,8 @@ class AnswerSerializers(serializers.ModelSerializer):
             error = CustomResponse(success=False, error={'thread': 'thread is closed'})
             raise serializers.ValidationError(error.get_response)
 
-class USerializer(serializers.ModelSerializer):
 
+class USerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = (
@@ -86,9 +86,11 @@ class USerializer(serializers.ModelSerializer):
         )
         read_only_fields = ('replied_to',)
 
+
 class ASerializer(serializers.ModelSerializer):
-    replied_by=USerializer()
+    replied_by = USerializer()
     id = serializers.IntegerField(required=False)
+
     class Meta:
         model = Answer
         fields = (
@@ -99,9 +101,9 @@ class ASerializer(serializers.ModelSerializer):
         )
         read_only_fields = ('replied_to',)
 
-class QSerializer(serializers.ModelSerializer):
 
-    answers=ASerializer(many=True)
+class QSerializer(serializers.ModelSerializer):
+    answers = ASerializer(many=True)
 
     class Meta:
         model = Query
@@ -110,8 +112,3 @@ class QSerializer(serializers.ModelSerializer):
             'question',
             'answers'
         )
-
-
-
-
-
