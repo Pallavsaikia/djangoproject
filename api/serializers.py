@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from dashboard_app.models import Query, Appointment
+from dashboard_app.models import Query, Answer
 from rest_framework import serializers
 
 
@@ -50,4 +50,9 @@ class QuerySerializers(serializers.ModelSerializer):
         query.save()
 
 
-
+class AnswerSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Answer
+        fields = [
+            'reply'
+        ]

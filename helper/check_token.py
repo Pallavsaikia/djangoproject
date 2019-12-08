@@ -1,5 +1,6 @@
 from django.http import JsonResponse
 from functools import wraps
+from django.contrib.auth.models import User
 
 
 def check_token(function):
@@ -10,6 +11,12 @@ def check_token(function):
                                  "error": {"token": "invalid token"},
                                  "data": {}})
         else:
-            return function(request, *args, **kwargs)
+            username = request.token_decode.get("username")
+            if User.objects.filter(username=username).exists():
+                return function(request, *args, **kwargs)
+            else:
+                return JsonResponse({"success": False,
+                                     "error": {"token": "invalid token"},
+                                     "data": {}})
 
     return wrap

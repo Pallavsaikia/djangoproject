@@ -28,5 +28,5 @@ class Query(models.Model):
 class Answer(models.Model):
     replied_by = models.ForeignKey(User, on_delete=models.CASCADE)
     replied_to = models.ForeignKey(Query, on_delete=models.CASCADE)
-    replied_on = models.DateTimeField(auto_now_add=True, blank=True)
+    replied_on = models.DateTimeField(auto_now_add=True)
     reply = models.TextField()

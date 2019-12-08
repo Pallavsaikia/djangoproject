@@ -65,6 +65,22 @@ class AskQueryApiView(APIView):
             return Response(response.get_response, status=status.HTTP_400_BAD_REQUEST)
 
 
+class AnswerAQueryApiView(APIView):
+    @method_decorator(check_token)
+    def post(self, request):
+        decode = JwtDecode.decode(request)
+        username = decode.get("username")
+        user = User.objects.get(username=username)
+        serializer = QuerySerializers(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user)
+            response = CustomResponse(success=True)
+            return Response(response.get_response, status=status.HTTP_200_OK)
+        else:
+            response = CustomResponse(success=False, error=serializer.errors)
+            return Response(response.get_response, status=status.HTTP_400_BAD_REQUEST)
+
+
 class AskAppointmentApiView(APIView):
     @method_decorator(check_token)
     def post(self, request):
