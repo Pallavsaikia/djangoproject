@@ -13,7 +13,7 @@ class Dashboard(View):
 
     @method_decorator(login_required(login_url='/'))
     def get(self, request):
-        query = Query.objects.filter(replied=False)
+        query = Query.objects.filter(replied=False).filter(closed=False)
         context_send = {'queries': query}
         return render(request, 'dashboard.html', context=context_send)
 

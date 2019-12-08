@@ -76,6 +76,10 @@ class AnswerAQueryApiView(APIView):
         serializer = AnswerSerializers(data=request.data)
         if serializer.is_valid():
             serializer.save(user=user)
+            replied_to = serializer.data['replied_to']
+            query = Query.objects.get(id=replied_to)
+            query.replied = False
+            query.save()
             response = CustomResponse(success=True)
             return Response(response.get_response, status=status.HTTP_200_OK)
         else:

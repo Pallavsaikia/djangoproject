@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from dashboard_app.models import Query, Answer
 from rest_framework import serializers
+from helper.CustomResponse import CustomResponse
 
 
 class RegisterSerializers(serializers.ModelSerializer):
@@ -27,7 +28,8 @@ class RegisterSerializers(serializers.ModelSerializer):
             user.save()
             return user
         else:
-            raise serializers.ValidationError({'password': 'Password field cant be empty'})
+            error = CustomResponse(success=False, error={'password': 'Password field cant be empty'})
+            raise serializers.ValidationError(error.get_response)
 
 
 class LoginSerializers(serializers.Serializer):
@@ -65,4 +67,9 @@ class AnswerSerializers(serializers.ModelSerializer):
             replied_by=user,
 
         )
-        answer.save()
+        query = Query.objects.get(id=self.data['replied_to'])
+        if not query.closed:
+            answer.save()
+        else:
+            error = CustomResponse(success=False, error={'thread': 'thread is closed'})
+            raise serializers.ValidationError(error.get_response)
