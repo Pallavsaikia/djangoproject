@@ -73,3 +73,45 @@ class AnswerSerializers(serializers.ModelSerializer):
         else:
             error = CustomResponse(success=False, error={'thread': 'thread is closed'})
             raise serializers.ValidationError(error.get_response)
+
+class USerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = (
+            'id',
+            'username',
+            'first_name',
+            'last_name',
+        )
+        read_only_fields = ('replied_to',)
+
+class ASerializer(serializers.ModelSerializer):
+    replied_by=USerializer()
+    id = serializers.IntegerField(required=False)
+    class Meta:
+        model = Answer
+        fields = (
+            'id',
+            'reply',
+            'replied_to',
+            'replied_by'
+        )
+        read_only_fields = ('replied_to',)
+
+class QSerializer(serializers.ModelSerializer):
+
+    answers=ASerializer(many=True)
+
+    class Meta:
+        model = Query
+        fields = (
+            'id',
+            'question',
+            'answers'
+        )
+
+
+
+
+

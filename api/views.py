@@ -3,7 +3,8 @@ from api.serializers import (
     RegisterSerializers,
     LoginSerializers,
     QuerySerializers,
-    AnswerSerializers
+    AnswerSerializers,
+    QSerializer
 )
 from rest_framework.response import Response
 from rest_framework import status
@@ -15,7 +16,7 @@ from dashboard_app.models import Appointment
 from helper.JWTDecode import JwtDecode
 from helper.check_token import check_token
 from django.utils.decorators import method_decorator
-from dashboard_app.models import Query
+from dashboard_app.models import Query,Answer
 import jwt
 from datetime import datetime
 
@@ -72,7 +73,6 @@ class AnswerAQueryApiView(APIView):
     def post(self, request):
         username = request.token_decode.get("username")
         user = User.objects.get(username=username)
-
         serializer = AnswerSerializers(data=request.data)
         if serializer.is_valid():
             serializer.save(user=user)
@@ -85,6 +85,19 @@ class AnswerAQueryApiView(APIView):
         else:
             response = CustomResponse(success=False, error=serializer.errors)
             return Response(response.get_response, status=status.HTTP_400_BAD_REQUEST)
+
+    @method_decorator(check_token)
+    def get(self, request):
+        username = request.token_decode.get("username")
+        user = User.objects.get(username=username)
+        queryset = Query.objects.filter(asked_by=user)
+        serializer = QSerializer(queryset, many=True)
+        print(serializer.data)
+        print(serializer.data)
+        print(serializer.data)
+        response = CustomResponse(success=True, data=serializer.data)
+        return Response(response.get_response, status=status.HTTP_200_OK)
+
 
 
 class AskAppointmentApiView(APIView):

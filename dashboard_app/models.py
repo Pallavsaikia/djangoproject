@@ -23,9 +23,14 @@ class Query(models.Model):
     def __str__(self):
         return self.question
 
+    @property
+    def answers(self):
+        return self.answer_set.all()
+
 
 class Answer(models.Model):
     replied_by = models.ForeignKey(User, on_delete=models.CASCADE)
     replied_to = models.ForeignKey(Query, on_delete=models.CASCADE)
     replied_on = models.DateTimeField(auto_now_add=True)
     reply = models.TextField()
+
