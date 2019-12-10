@@ -54,23 +54,6 @@ class LoginAPIView(APIView):
         return Response(response.get_response, status=status.HTTP_400_BAD_REQUEST)
 
 
-class AskQueryApiView(APIView):
-    @method_decorator(check_token)
-    def post(self, request):
-        username = request.token_decode.get("username")
-        user = User.objects.get(username=username)
-        serializer = QuerySerializers(data=request.data)
-        if serializer.is_valid():
-            serializer.save(user)
-
-            response = Response(CustomResponse(success=True).get_response, status=status.HTTP_200_OK)
-            response['HTTP_AUTHORIZATION'] = JwtDecode.encode(username)
-            return response
-        else:
-            response = CustomResponse(success=False, error=serializer.errors)
-            return Response(response.get_response, status=status.HTTP_400_BAD_REQUEST)
-
-
 class AnswerAQueryApiView(APIView):
     @method_decorator(check_token)
     def post(self, request):
@@ -127,6 +110,21 @@ class AskAppointmentApiView(APIView):
 
 
 class QuestionApiView(APIView):
+    @method_decorator(check_token)
+    def post(self, request):
+        username = request.token_decode.get("username")
+        user = User.objects.get(username=username)
+        serializer = QuerySerializers(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user)
+
+            response = Response(CustomResponse(success=True).get_response, status=status.HTTP_200_OK)
+            response['HTTP_AUTHORIZATION'] = JwtDecode.encode(username)
+            return response
+        else:
+            response = CustomResponse(success=False, error=serializer.errors)
+            return Response(response.get_response, status=status.HTTP_400_BAD_REQUEST)
+
     @method_decorator(check_token)
     def get(self, request):
         username = request.token_decode.get("username")
