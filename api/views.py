@@ -133,7 +133,7 @@ class QuestionApiView(APIView):
         if serializer.is_valid():
             page_num = serializer.data['page_no']
             user = User.objects.get(username=username)
-            objects=None
+            objects = None
             try:
                 replied = request.data['replied']
                 # print(Re)
