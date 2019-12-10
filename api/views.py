@@ -4,21 +4,23 @@ from api.serializers import (
     LoginSerializers,
     QuerySerializers,
     AnswerSerializers,
-    QSerializer
+    QuestionSerializer,
+    IntSerializer
 )
 from rest_framework.response import Response
 from rest_framework import status
 from helper.CustomResponse import CustomResponse
 from django.contrib.auth.models import User
 from django.contrib.auth.models import auth
-from first_project.settings import TOKEN_KEY
+from first_project.settings import PAGE_SIZE
 from dashboard_app.models import Appointment
 from helper.JWTDecode import JwtDecode
 from helper.check_token import check_token
 from django.utils.decorators import method_decorator
-from dashboard_app.models import Query,Answer
+from dashboard_app.models import Query, Answer
 import jwt
 from datetime import datetime
+from django.core.paginator import Paginator
 
 
 # Create your views here.
@@ -42,7 +44,7 @@ class LoginAPIView(APIView):
             password = serializer.data['password']
             user = auth.authenticate(username=username, password=password)
             if user is not None and not user.is_staff:
-                token = jwt.encode({"username": username}, TOKEN_KEY, algorithm="HS256")
+                token = JwtDecode.encode(username=username)
                 response = CustomResponse(success=True, data={"token": token})
                 return Response(response.get_response, status=status.HTTP_200_OK)
             else:
@@ -55,14 +57,15 @@ class LoginAPIView(APIView):
 class AskQueryApiView(APIView):
     @method_decorator(check_token)
     def post(self, request):
-        decode = JwtDecode.decode(request)
-        username = decode.get("username")
+        username = request.token_decode.get("username")
         user = User.objects.get(username=username)
         serializer = QuerySerializers(data=request.data)
         if serializer.is_valid():
             serializer.save(user)
-            response = CustomResponse(success=True)
-            return Response(response.get_response, status=status.HTTP_200_OK)
+
+            response = Response(CustomResponse(success=True).get_response, status=status.HTTP_200_OK)
+            response['HTTP_AUTHORIZATION'] = JwtDecode.encode(username)
+            return response
         else:
             response = CustomResponse(success=False, error=serializer.errors)
             return Response(response.get_response, status=status.HTTP_400_BAD_REQUEST)
@@ -80,24 +83,12 @@ class AnswerAQueryApiView(APIView):
             query = Query.objects.get(id=replied_to)
             query.replied = False
             query.save()
-            response = CustomResponse(success=True)
-            return Response(response.get_response, status=status.HTTP_200_OK)
+            response = Response(CustomResponse(success=True).get_response, status=status.HTTP_200_OK)
+            response['HTTP_AUTHORIZATION'] = JwtDecode.encode(username)
+            return response
         else:
             response = CustomResponse(success=False, error=serializer.errors)
             return Response(response.get_response, status=status.HTTP_400_BAD_REQUEST)
-
-    @method_decorator(check_token)
-    def get(self, request):
-        username = request.token_decode.get("username")
-        user = User.objects.get(username=username)
-        queryset = Query.objects.filter(asked_by=user)
-        serializer = QSerializer(queryset, many=True)
-        print(serializer.data)
-        print(serializer.data)
-        print(serializer.data)
-        response = CustomResponse(success=True, data=serializer.data)
-        return Response(response.get_response, status=status.HTTP_200_OK)
-
 
 
 class AskAppointmentApiView(APIView):
@@ -117,17 +108,45 @@ class AskAppointmentApiView(APIView):
             if appointment_count_true == 0:
                 appointment = Appointment(user=user)
                 appointment.save()
-                response = CustomResponse(success=True)
-                return Response(response.get_response, status=status.HTTP_200_OK)
+                response = Response(CustomResponse(success=True).get_response, status=status.HTTP_200_OK)
+                response['HTTP_AUTHORIZATION'] = JwtDecode.encode(username)
+                return response
             else:
                 appointment_date_passed_count = Appointment.objects.filter(user=user).filter(appointed=True).filter(
                     day_of_appointment__gte=datetime.now()).count()
                 if appointment_date_passed_count == 0:
                     appointment = Appointment(user=user)
                     appointment.save()
-                    response = CustomResponse(success=True)
-                    return Response(response.get_response, status=status.HTTP_200_OK)
+                    response = Response(CustomResponse(success=True).get_response, status=status.HTTP_200_OK)
+                    response['HTTP_AUTHORIZATION'] = JwtDecode.encode(username)
+                    return response
                 else:
                     response = CustomResponse(success=False,
                                               error={"appointment": "Already has one appointment"})
                     return Response(response.get_response, status=status.HTTP_400_BAD_REQUEST)
+
+
+class QuestionApiView(APIView):
+    @method_decorator(check_token)
+    def get(self, request):
+        username = request.token_decode.get("username")
+        serializer = IntSerializer(data=request.data)
+        if serializer.is_valid():
+            page_num = serializer.data['page_no']
+            user = User.objects.get(username=username)
+            objects = Query.objects.filter(asked_by=user)
+            queryset = Paginator(objects, PAGE_SIZE)
+            last_page = queryset.page_range[-1]
+            if last_page >= page_num:
+                serializer = QuestionSerializer(queryset.page(page_num).object_list, many=True)
+                response = Response(
+                    CustomResponse(success=True, data=serializer.data, last_page=last_page).get_response,
+                    status=status.HTTP_200_OK)
+                response['HTTP_AUTHORIZATION'] = JwtDecode.encode(username)
+                return response
+            else:
+                response = CustomResponse(success=False, error={"page_no": "invalid page number"})
+                return Response(response.get_response, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            response = CustomResponse(success=False, error=serializer.errors)
+            return Response(response.get_response, status=status.HTTP_400_BAD_REQUEST)

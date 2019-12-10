@@ -103,12 +103,29 @@ class ASerializer(serializers.ModelSerializer):
 
 
 class QSerializer(serializers.ModelSerializer):
-    answers = ASerializer(many=True)
+    # answers = ASerializer(many=True)
 
     class Meta:
         model = Query
         fields = (
             'id',
             'question',
-            'answers'
+            # 'answers'
         )
+
+
+class QuestionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Query
+        fields = (
+            'id',
+            'question',
+            'closed',
+            'replied',
+            'asked_On'
+            # 'answers'
+        )
+
+
+class IntSerializer(serializers.Serializer):
+    page_no = serializers.IntegerField(required=True)

@@ -8,5 +8,6 @@ urlpatterns = [
     url(r'^ask-a-query/', views.AskQueryApiView.as_view(), name='ask'),
     url(r'^answer/', views.AnswerAQueryApiView.as_view(), name='answer'),
     url(r'^appointment/', views.AskAppointmentApiView.as_view(), name='appointment'),
+    url(r'^question/', views.QuestionApiView.as_view(), name='question'),
 
 ]
