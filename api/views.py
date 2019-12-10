@@ -129,22 +129,30 @@ class QuestionApiView(APIView):
     def get(self, request):
         username = request.token_decode.get("username")
         serializer = IntSerializer(data=request.data)
+
         if serializer.is_valid():
             page_num = serializer.data['page_no']
             user = User.objects.get(username=username)
-            objects = Query.objects.filter(asked_by=user)
-            queryset = Paginator(objects, PAGE_SIZE)
-            last_page = queryset.page_range[-1]
-            if last_page >= page_num:
-                serializer = QuestionSerializer(queryset.page(page_num).object_list, many=True)
-                response = Response(
-                    CustomResponse(success=True, data=serializer.data, last_page=last_page).get_response,
-                    status=status.HTTP_200_OK)
-                response['HTTP_AUTHORIZATION'] = JwtDecode.encode(username)
-                return response
-            else:
-                response = CustomResponse(success=False, error={"page_no": "invalid page number"})
-                return Response(response.get_response, status=status.HTTP_400_BAD_REQUEST)
+            objects=None
+            try:
+                replied = request.data['replied']
+                # print(Re)
+                objects = Query.objects.filter(asked_by=user).filter(replied=replied)
+            except:
+                objects = Query.objects.filter(asked_by=user)
+            finally:
+                queryset = Paginator(objects, PAGE_SIZE)
+                last_page = queryset.page_range[-1]
+                if last_page >= page_num:
+                    serializer = QuestionSerializer(queryset.page(page_num).object_list, many=True)
+                    response = Response(
+                        CustomResponse(success=True, data=serializer.data, last_page=last_page).get_response,
+                        status=status.HTTP_200_OK)
+                    response['HTTP_AUTHORIZATION'] = JwtDecode.encode(username)
+                    return response
+                else:
+                    response = CustomResponse(success=False, error={"page_no": "invalid page number"})
+                    return Response(response.get_response, status=status.HTTP_400_BAD_REQUEST)
         else:
             response = CustomResponse(success=False, error=serializer.errors)
             return Response(response.get_response, status=status.HTTP_400_BAD_REQUEST)
