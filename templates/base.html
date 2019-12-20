@@ -48,26 +48,28 @@
             <div class="sidebar-sticky">
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link active" href="#">
-                            <span data-feather="home"></span>
+                        <a class="nav-link {% if request.path == '/dashboard/' %} active {% endif %}"
+                           href="{% url 'dashboard'  %}">
+
                             Dashboard <span class="sr-only">(current)</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            <span data-feather="file"></span>
+                        <a class="nav-link {% if request.path == '/pending/' %} active {% endif %}"
+                           href="{% url 'dashboard'  %}">
+
                             Pending Appointment
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            <span data-feather="shopping-cart"></span>
+                        <a class="nav-link {% if request.path == '/appointment/' %} active {% endif %}"
+                           href="{% url 'dashboard'  %}">
                             Appointment
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            <span data-feather="shopping-cart"></span>
+                        <a class="nav-link {% if '/query/'  in  request.path  %} active {% endif %}"
+                           href="{% url 'query_all'  %}">
                             Query
                         </a>
                     </li>

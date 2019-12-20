@@ -125,6 +125,7 @@ class QuestionSerializer(serializers.ModelSerializer):
             'asked_On'
             # 'answers'
         )
+        ordering = ['-asked_On']
 
 
 class IntSerializer(serializers.Serializer):

@@ -17,11 +17,14 @@ from django.contrib import admin
 from django.urls import path
 from django.conf.urls import url, include
 from first_app import views
+from dashboard_app import views as v
 
 urlpatterns = [
     url(r'^$', views.Login.as_view(), name='login'),
     url(r'^logout/', views.Logout.as_view(), name='logout'),
     url(r'^dashboard/', include('dashboard_app.urls'), name='dashboard'),
+    url(r'^query/(?P<value>\d+)/$', v.QueryViewThread.as_view(), name='query'),
+    url(r'^query/', v.QueryView.as_view(), name='query_all'),
     url(r'^api/', include('api.urls'), name='api'),
     path('admin/', admin.site.urls),
 ]

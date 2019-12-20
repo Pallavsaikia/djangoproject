@@ -13,7 +13,7 @@ class Dashboard(View):
 
     @method_decorator(login_required(login_url='/'))
     def get(self, request):
-        query = Query.objects.filter(replied=False).filter(closed=False)
+        query = Query.objects.filter(replied=False).filter(closed=False).order_by('-asked_On')
         context_send = {'queries': query}
         return render(request, 'dashboard.html', context=context_send)
 
@@ -21,7 +21,7 @@ class Dashboard(View):
         pass
 
 
-class QueryView(View):
+class QueryViewThread(View):
 
     @method_decorator(login_required(login_url='/'))
     def get(self, request, value):
@@ -40,3 +40,14 @@ class QueryView(View):
         question.replied = True
         question.save()
         return HttpResponseRedirect(reverse('query', args=(value,)))
+
+
+class QueryView(View):
+    @method_decorator(login_required(login_url='/'))
+    def get(self, request):
+        query = Query.objects.order_by('-asked_On','replied')
+        context_send = {'queries': query}
+        return render(request, 'query.html', context=context_send)
+
+    def post(self, request):
+        pass

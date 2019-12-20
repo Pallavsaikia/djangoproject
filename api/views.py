@@ -136,10 +136,9 @@ class QuestionApiView(APIView):
             objects = None
             try:
                 replied = request.data['replied']
-                # print(Re)
-                objects = Query.objects.filter(asked_by=user).filter(replied=replied)
+                objects = Query.objects.filter(asked_by=user).filter(replied=replied).order_by('-asked_On')
             except:
-                objects = Query.objects.filter(asked_by=user)
+                objects = Query.objects.filter(asked_by=user).order_by('-asked_On')
             finally:
                 queryset = Paginator(objects, PAGE_SIZE)
                 last_page = queryset.page_range[-1]
