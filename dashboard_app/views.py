@@ -14,7 +14,7 @@ class Dashboard(View):
     @method_decorator(login_required(login_url='/'))
     def get(self, request):
         query = Query.objects.filter(replied=False).filter(closed=False).order_by('-asked_On')
-        context_send = {'queries': query,'pending': getAppointment()}
+        context_send = {'queries': query, 'pending': getAppointment()}
         return render(request, 'dashboard.html', context=context_send)
 
     def post(self, request):
@@ -28,7 +28,7 @@ class QueryViewThread(View):
         if value:
             query = Query.objects.get(pk=value)
             query_reply = Answer.objects.filter(replied_to=value).order_by('replied_on')
-            context_send = {'queries': query, 'replies': query_reply,'pending': getAppointment()}
+            context_send = {'queries': query, 'replies': query_reply, 'pending': getAppointment()}
             return render(request, 'answer_query.html', context=context_send)
         else:
             query = Query.objects.order_by('-asked_On', 'replied')
@@ -47,6 +47,12 @@ class QueryViewThread(View):
         return HttpResponseRedirect(reverse('query', args=(value,)))
 
 
+class PendingViewThread(View):
+    @method_decorator(login_required(login_url='/'))
+    def get(self, request):
+        appointments = Appointment.objects.filter(appointed=False)
+        context_send = {'appointments': appointments, 'pending': getAppointment()}
+        return render(request, 'pending.html', context=context_send)
 
 
 def getAppointment():

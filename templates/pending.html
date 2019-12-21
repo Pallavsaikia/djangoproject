@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Appoint</h1>
+    </div>
+</main>
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4 ">
+    {% for appointment in appointments %}
+    <div class="container  border-bottom pb-3">
+        <div class="row">
+            <div class="[ col-xs-12 col-sm-offset-1 col-sm-12 ] ">
+                <div class="[ panel panel-default ] panel-google-plus ">
+
+                    <div class="panel-heading">
+                        <img class="[ img-circle pull-left ]"
+                             src="https://lh3.googleusercontent.com/-CxXg7_7ylq4/AAAAAAAAAAI/AAAAAAAAAQ8/LhCIKQC5Aq4/s46-c-k-no/photo.jpg"
+                             alt="Mouse0270"/>
+                        <h3 class="mt-2">{{appointment.user.first_name|capfirst}}</h3>
+                        <h5><span>{{appointment.user.email}}</span></h5>
+                        <h5><span>Requested On: {{appointment.requested_on|date:"D d M Y"}}</span></h5>
+                    </div>
+                    <div class="d-flex text-justify  align-items-center pt-3 pb-2 mb-1 pr-0 pl-0">
+<!--                        <p>{{query.question|capfirst}}</p>-->
+                    </div>
+                    <a href="{% url 'query' value=appointment.id %}" class="btn btn-outline-info mt-2" role="button">Appoint</a>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+    {% endfor %}
+</main>
+{% endblock%}

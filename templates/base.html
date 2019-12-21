@@ -55,8 +55,8 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if request.path == '/pending/' %} active {% endif %}"
-                           href="{% url 'dashboard'  %}">
+                        <a class="nav-link {% if request.path == '/appoint/' %} active {% endif %}"
+                           href="{% url 'appoint'  %}">
 
                             Pending Appointment{% if pending %} <span class="text-danger">!</span> {% endif %}
                         </a>
