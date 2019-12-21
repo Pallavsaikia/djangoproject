@@ -49,10 +49,16 @@ class QueryViewThread(View):
 
 class PendingViewThread(View):
     @method_decorator(login_required(login_url='/'))
-    def get(self, request):
-        appointments = Appointment.objects.filter(appointed=False)
-        context_send = {'appointments': appointments, 'pending': getAppointment()}
-        return render(request, 'pending.html', context=context_send)
+    def get(self, request,id):
+        if id:
+            appointment = Appointment.objects.get(pk=id)
+
+            context_send = {'appointment': appointment,  'pending': getAppointment()}
+            return render(request, 'appoint.html', context=context_send)
+        else:
+            appointments = Appointment.objects.filter(appointed=False)
+            context_send = {'appointments': appointments, 'pending': getAppointment()}
+            return render(request, 'pending.html', context=context_send)
 
 
 def getAppointment():
