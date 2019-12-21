@@ -7,7 +7,9 @@ from django.utils.decorators import method_decorator
 from dashboard_app.models import Query, Answer, Appointment
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
-
+from django.db.models.functions import TruncDate
+from django.db.models import Count
+from datetime import datetime, timedelta
 
 class Dashboard(View):
 
@@ -49,16 +51,30 @@ class QueryViewThread(View):
 
 class PendingViewThread(View):
     @method_decorator(login_required(login_url='/'))
-    def get(self, request,id):
+    def get(self, request, id):
         if id:
             appointment = Appointment.objects.get(pk=id)
-
-            context_send = {'appointment': appointment,  'pending': getAppointment()}
+            appointed = Appointment.objects.annotate(date=TruncDate('day_of_appointment')).values('date').annotate(
+                c=Count('id'))
+            print(appointed)
+            print(appointed)
+            print(appointed)
+            print(appointed)
+            context_send = {'appointment': appointment, 'appointed': appointed, 'pending': getAppointment()}
             return render(request, 'appoint.html', context=context_send)
         else:
             appointments = Appointment.objects.filter(appointed=False)
             context_send = {'appointments': appointments, 'pending': getAppointment()}
             return render(request, 'pending.html', context=context_send)
+
+    @method_decorator(login_required(login_url='/'))
+    def post(self, request, id):
+        appointment = Appointment.objects.get(pk=id)
+        latest=Appointment.objects.latest('day_of_appointment')
+        appointment.appointed=True
+        appointment.day_of_appointment=latest.day_of_appointment+timedelta(hours=1)
+        appointment.save()
+        return HttpResponseRedirect(reverse('appoint'))
 
 
 def getAppointment():

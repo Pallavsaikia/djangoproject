@@ -26,8 +26,11 @@
                     <div class="d-flex text-justify  align-items-center pt-3 pb-2 mb-1 pr-0 pl-0">
 <!--                        <p>{{query.question|capfirst}}</p>-->
                     </div>
-                    <a href="{% url 'query' value=appointment.id %}" class="btn btn-outline-info mt-2" role="button">Appoint</a>
+                    <form action="{% url 'appoint' id=appointment.id %}" method="post">
+                        {% csrf_token %}
 
+                        <button type="submit" class="btn btn-success green"><i class="fa fa-share"></i> Auto Appoint</button>
+                    </form>
                 </div>
             </div>
 
