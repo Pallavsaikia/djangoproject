@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 class Appointment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True)
     day_of_appointment = models.DateTimeField(blank=True, null=True)
+    reason = models.TextField(blank=True, null=True)
     requested_on = models.DateTimeField(auto_now_add=True)
     appointed = models.BooleanField(default=False)
 

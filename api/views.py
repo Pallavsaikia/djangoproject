@@ -80,33 +80,39 @@ class AskAppointmentApiView(APIView):
         decode = JwtDecode.decode(request)
         username = decode.get("username")
         user = User.objects.get(username=username)
-        user_appointment = Appointment.objects.filter(user=user)
+        reason = None
+        try:
+            reason = request.data["reason"]
+        except:
+            reason = None
+        finally:
+            user_appointment = Appointment.objects.filter(user=user)
 
-        appointment_count_false = user_appointment.filter(appointed=False).count()
-        appointment_count_true = user_appointment.filter(appointed=True).count()
-        if appointment_count_false > 0:
-            response = CustomResponse(success=False, error={"appointment": "Already has one appointment request"})
-            return Response(response.get_response, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            if appointment_count_true == 0:
-                appointment = Appointment(user=user)
-                appointment.save()
-                response = Response(CustomResponse(success=True).get_response, status=status.HTTP_200_OK)
-                response['HTTP_AUTHORIZATION'] = JwtDecode.encode(username)
-                return response
+            appointment_count_false = user_appointment.filter(appointed=False).count()
+            appointment_count_true = user_appointment.filter(appointed=True).count()
+            if appointment_count_false > 0:
+                response = CustomResponse(success=False, error={"appointment": "Already has one appointment request"})
+                return Response(response.get_response, status=status.HTTP_400_BAD_REQUEST)
             else:
-                appointment_date_passed_count = Appointment.objects.filter(user=user).filter(appointed=True).filter(
-                    day_of_appointment__gte=datetime.now()).count()
-                if appointment_date_passed_count == 0:
-                    appointment = Appointment(user=user)
+                if appointment_count_true == 0:
+                    appointment = Appointment(user=user, reason=reason)
                     appointment.save()
                     response = Response(CustomResponse(success=True).get_response, status=status.HTTP_200_OK)
                     response['HTTP_AUTHORIZATION'] = JwtDecode.encode(username)
                     return response
                 else:
-                    response = CustomResponse(success=False,
-                                              error={"appointment": "Already has one appointment"})
-                    return Response(response.get_response, status=status.HTTP_400_BAD_REQUEST)
+                    appointment_date_passed_count = Appointment.objects.filter(user=user).filter(appointed=True).filter(
+                        day_of_appointment__gte=datetime.now()).count()
+                    if appointment_date_passed_count == 0:
+                        appointment = Appointment(user=user, reason=reason)
+                        appointment.save()
+                        response = Response(CustomResponse(success=True).get_response, status=status.HTTP_200_OK)
+                        response['HTTP_AUTHORIZATION'] = JwtDecode.encode(username)
+                        return response
+                    else:
+                        response = CustomResponse(success=False,
+                                                  error={"appointment": "Already has one appointment"})
+                        return Response(response.get_response, status=status.HTTP_400_BAD_REQUEST)
 
 
 class QuestionApiView(APIView):

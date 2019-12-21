@@ -17,7 +17,10 @@
                              src="https://lh3.googleusercontent.com/-CxXg7_7ylq4/AAAAAAAAAAI/AAAAAAAAAQ8/LhCIKQC5Aq4/s46-c-k-no/photo.jpg"
                              alt="Mouse0270"/>
                         <h3 class="mt-2">{{query.asked_by|capfirst}}</h3>
-                        <h5><span>{{query.asked_On|date:"D d M Y"}}</span></h5>
+                        {% load tz %}
+                        {% timezone "Asia/Kolkata" %}
+                        <h5><span>{{query.asked_On|date:"D ,jS F Y ,H:i"}}</span></h5>
+                        {% endtimezone %}
                     </div>
                     <div class="d-flex text-justify  align-items-center pt-3 pb-2 mb-1 pr-0 pl-0">
                         <p>{{query.question|capfirst}}</p>
